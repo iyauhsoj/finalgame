@@ -206,7 +206,6 @@ function ninja () {
     info.startCountdown(35)
 }
 function makeLevel () {
-    cleanCoins()
     game.splash("Level " + level)
     map()
     coinAnimation()
@@ -214,9 +213,22 @@ function makeLevel () {
 info.onCountdownEnd(function () {
     statusbar.value += -25
 })
+scene.onHitTile(SpriteKind.Player, 7, function (sprite) {
+    statusbar.value += -25
+    scene.placeOnRandomTile(Ninja, 9)
+    info.startCountdown(35)
+})
 statusbars.onZero(StatusBarKind.Health, function (status) {
     game.over(false)
 })
+function clear () {
+    for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
+        value.destroy()
+    }
+    for (let value of sprites.allOfKind(SpriteKind.Player)) {
+        points.destroy()
+    }
+}
 function map () {
     scene.setTile(1, img`
         d 1 1 1 1 1 1 b d 1 1 1 1 1 1 b 
@@ -320,67 +332,68 @@ function map () {
             22222112222122222112212222222222122222222212222222222222222222222222212222212222
             `)
     } else if (level == 2) {
+        clear()
         scene.setTileMap(img`
-            .9....9...
-            ..........
-            ..........
-            ..........
-            .....1.1..
-            .1........
-            ..........
-            ..4...1...
-            ..........
-            ....1...1.
-            ..........
-            ...1......
-            ..........
-            ..1..1.4..
-            ..........
-            ..........
-            ..........
-            ...4...1..
-            ..........
-            .....1....
-            .1.....1..
-            ..........
-            ..1.......
-            ......1...
-            ..........
-            ...4......
-            ........4.
-            ..........
-            .1........
-            .....1...1
-            ..1..1....
-            ..........
-            ......1...
-            ..........
-            ...1......
-            ........4.
-            .4...1....
-            ..........
-            ...1.....1
-            ......1...
-            ..1.......
-            1.........
-            .........4
-            .....4....
-            ..........
-            ...1...1..
-            .........1
-            ..........
-            .4........
-            ....1.1...
-            ..........
-            ..1......4
-            ....1.....
-            ..4.......
-            ......1...
-            ....1...1.
-            .1........
-            ...4.....4
-            ......1...
-            ....43....
+            19....9..1
+            1........1
+            1........1
+            1..4.....1
+            1....1.1.1
+            11.......1
+            1.......41
+            1.4...1..1
+            1........1
+            1.1.1.1.11
+            1........1
+            14.1...4.1
+            1........1
+            1.1..1.4.1
+            1........1
+            1...4....1
+            14.......1
+            1..4...1.1
+            1........1
+            1....1...1
+            11.....1.1
+            1...4....1
+            1.1......1
+            11....1..1
+            14.......1
+            1..4.....1
+            11.1.1.141
+            1........1
+            11.......1
+            1....1...1
+            1.1..1.4.1
+            1........1
+            14....1..1
+            1........1
+            1..1.....1
+            1.......41
+            14...1...1
+            1........1
+            1..1.....1
+            1.....1..1
+            1.1......1
+            1........1
+            11.1.1.1.1
+            1....4...1
+            1........1
+            1..1...1.1
+            1........1
+            1....4...1
+            14......41
+            11.1.1.1.1
+            1........1
+            1........1
+            1...1..4.1
+            1.4......1
+            1.....1..1
+            1...1...11
+            11.......1
+            1..4..4..1
+            1.....1..1
+            1...43...1
             `)
         scene.setBackgroundColor(2)
         scene.setTile(4, img`
@@ -458,34 +471,176 @@ function map () {
             . . . . . . . . . . . . . . . . 
             `, true)
     } else if (level == 3) {
-        Ninja = sprites.create(img`
-            . . . f f . . . . . . . . f f . 
-            . . . f a f . f . . f . f a f . 
-            . . . . f a f . . . . f a f . . 
-            . c c c c c c c c c c c c c . . 
-            . c c c c c c c c c c c c c f . 
-            c . . f f f f f f f f f f f . . 
-            . . . f 1 1 1 1 f 1 1 1 1 f . . 
-            . . . f 1 1 1 1 f 1 1 1 1 f . . 
-            . . . f f f f f f f f f f f . . 
-            . . . f f f f f f f f f f f . . 
-            . . . f f 1 f f f f f f f f . . 
-            . . . f f f 1 1 1 1 1 f f f . . 
-            . . a f f f f f f f f f f f a . 
-            . f . f f f f f f f f f f f . f 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            `, SpriteKind.Player)
+        clear()
+        ninja()
         scene.setTileMap(img`
-            ................................................................................
-            ................................................................................
-            ................................................................................
-            ................................................................................
-            ................................................................................
-            ................................................................................
-            ................................................................................
-            ................................................................................
+            9...............................................................................
+            ...................................................1......1................5....
+            ......5.............1......5.............11...1...................1......1.1...f
+            ......1........1.......1...1...1.....51.......11.......1......5........5.......1
+            ...1...............5.................1..............5.........1.....1..1........
+            .........1....1....1.....1..........1........1.1....11..111..1...........1......
+            1...1......1.....1....1......11...1.....1..11.....1................1.1....1.1...
+            77777777777777777777777777777777777777777777777777777777777777777777777777777777
             `)
+        scene.setBackgroundImage(img`
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+            222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222eeee222222222222222222222222222222222222222222
+            2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222eeeeeee22222222222222222222222222222222222222222
+            222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222eeeeeeeeee222222222222222222222222222222222222222
+            22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222eeeeeeeeee2222222222222222222222222222222222222222
+            22222222222222222222222222222222222222222222222222222222222222222222eee222222222222222222222222222222222222222eeeeeeeee22222222222222222222222222222222222222222
+            e222222222222222222222222222222222222222222222222222222222222222222eeeee2222222222222222222222222222222222222eeeeeeeeeeee22ee222222222222222222222222222222222ee
+            ee222222222222222222222222222222222222222222222222222222222222222eeeeeeee2222222222222222222222222222229222292eeeeeeeeee2222ee222222222222222222222222222222eeee
+            eee2222222222222222222222222222222222222222222222222222222222222eeeeeeeeeee22222222222222222222222222ee2222222eeeeeeeeeee2eeee2222222222222222222222222222eeeeee
+            eeeee2222222222222222222222222222222222222222222222222222222222eeeeeeeeeeeee22222222222222222222222eeeee22222eeeeeeeeeee222eeee22222222222222222222222222eeeeeee
+            eeeeee22222222222222222222222222222222222222222222222222222222eeeeeeeeeee22222222222222222222222eeeeeee292222eeeeeeeeeeee22eeee22222222222222222222222222eeeeeee
+            eeeeeee222222222222222222222222222222222222222222222222222222eeeeeeeeeeeee2222229922222299222eeeeeeeeee2222222eeeeeeeeeee22eeeee22222222222222222222222222eeeeee
+            eeeeeeee2222222222222222222222222222222222222222222222222222eeeeeeeeeeeeeee2222229922229999222eeeeeeeeee22222eeeeeeeeeeee2eeee2222222222222222222222ee22222eeeee
+            eeeeeeeeee2222222222222222222222222222222222222222222222222eeeeeeeeeeeeee22222292222222222922eeeeeeeeeeee222eeeeeeeeeeeee2eeeee22222992222222222222eee222eeeeeee
+            eeeeeeeeeee22222222222222222222222222222222222222222222222eeeeeeeeeeeeeeee222222e22222222e2222eeeeeeeeeee22eeeeeeeeeeeeeeeeeeeee22222222222222222eeee2222eeeeeee
+            eeeeeeeeeeee2222222222222222222222222222222222222222222222eeeeeeeeeeeeeeeeee222eeee22222ee222eeeeeeeeeeeee2eeeeeeeeeeeeeeeeeeee222222222222292eeeeeeeee2eeeeeeee
+            eeeeeeeeeeee222222222222222222222222222222222222222222222eeeeeeeeeeeeeeeee2222eeeee2222eeee22eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee2229922222992eeeeeeee2222eeeeee
+            eeeeeeeeeee222222222222222222222222222222222222222222222eeeeeeeeeeeeeeeeeee222eeee222222eee22eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee2229222299922eeeeeeee2eeeeeeee
+            eeeeeeeeee2222ee222222222222222222222222222222222222222eeeeeeeeeeeeeeeeeeeee22eeeeee22eeeee2eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee2222e222222222eeeeeeeee2eeeeeeee
+            eeeeeeeeeeee222eee222222222222222222222222222222222222eeeeeeeeeeeeeeeeeeeeeeeeeeeee2222eeee2eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee222eee22ee222222eeeeeeeeeeeeeee
+            eeeeeeeeeee222eeeee2222222222222222222222222222222222eeeeeeeeeeeeeeeeeeeeeeeeeeeeee2222eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee222ee2222ee22eeeeeeeeeeeeeeeeee
+            eeeeeeeeee22222eeeeee2222222222222222222222222222222eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee22eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee2eee2222e22222eeeeeeeeeeeeeeee
+            eeeeeeeeeee222eeeeeeeee2222222222222222222222222222eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee22eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee22ee222eeeeeeeeeeeeeeeeee
+            eeeeeeeeeeee22eeeeeeeeee22222222222222222222222222eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee2eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee22eee22eeeeeeeeeeeeeeeeee
+            eeeeeeeeeeee222eeeeeeeeeee22222222222222222222222eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee2eeee22eeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeee2eeeeeeeeee22222222222222222222299222222eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee2eeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeee222222222222222222299222222eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeee222222222222eeeeee2222222eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeee22922222ee2222eeeeeee22222922eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeee222222eee222eeeeeeeee222222eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeee2222922ee222eeeeeee222222eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeee2222222eee22eeeeeeeeee2222eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeee22222eee2222eeeeeeee222222eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeee292222eee222eeeeeeeee22222eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeee2222222eee22eeeeeeeeee222eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeee22222eeee22eeeeeeeeee222eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeee222eeeee2eeeeeeeeeeee2eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeee22eeeeee2eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeee2eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            `)
+        scene.setTile(7, img`
+            5 4 4 5 5 4 4 4 4 2 2 2 4 4 4 4 
+            4 4 4 4 4 5 5 4 2 2 2 2 4 4 4 5 
+            4 2 2 2 4 4 5 4 2 2 4 4 5 5 5 5 
+            2 2 4 2 4 4 5 4 2 2 4 5 5 5 5 4 
+            2 2 2 2 4 4 5 4 2 2 4 4 5 5 4 4 
+            4 2 2 2 4 5 5 4 4 4 4 4 4 4 4 2 
+            2 2 2 4 4 5 5 5 4 4 2 2 2 2 2 2 
+            4 2 2 4 5 5 5 5 4 2 2 4 2 2 2 4 
+            5 4 4 4 4 4 4 5 5 4 2 2 2 4 4 4 
+            4 4 4 2 2 2 4 4 5 5 4 4 4 4 5 5 
+            4 2 2 2 2 2 2 2 4 5 5 5 5 5 5 5 
+            5 4 4 2 4 2 2 4 4 5 5 5 4 4 4 5 
+            5 5 4 2 2 2 4 4 4 5 5 4 2 2 2 4 
+            4 5 4 4 4 4 5 5 5 5 4 2 4 2 2 4 
+            4 5 5 5 5 5 5 4 4 4 2 4 2 4 2 4 
+            4 5 5 5 4 4 4 4 2 2 2 2 4 2 4 4 
+            `, true)
+        scene.setTile(15, img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `, true)
     } else if (level == 4) {
         scene.setTileMap(img`
             ................................................................................
@@ -512,7 +667,6 @@ function map () {
 }
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     if (level == 2) {
-        game.splash("Press down button to throw Shurikens")
         shuriken = sprites.createProjectileFromSprite(img`
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
@@ -574,6 +728,7 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 scene.onHitTile(SpriteKind.Player, 3, function (sprite) {
+    game.splash("Press down button to throw Shurikens")
     if (level == 5) {
         game.over(true)
     } else {
@@ -581,11 +736,6 @@ scene.onHitTile(SpriteKind.Player, 3, function (sprite) {
         makeLevel()
     }
 })
-function cleanCoins () {
-    for (let value of sprites.allOfKind(SpriteKind.Player)) {
-        points.destroy()
-    }
-}
 scene.onHitTile(SpriteKind.Player, 15, function (sprite) {
     if (level == 5) {
         game.over(true)
@@ -634,22 +784,27 @@ function coinAnimation () {
         )
     }
 }
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
+    otherSprite.destroy()
+})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     statusbar.value += -5
-    otherSprite.follow(sprite, 30)
-    otherSprite.setFlag(SpriteFlag.Ghost, true)
-    pause(500)
-    otherSprite.setFlag(SpriteFlag.Ghost, false)
+    for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
+        value.follow(Ninja, 30)
+        value.setFlag(SpriteFlag.Ghost, true)
+        pause(500)
+        value.setFlag(SpriteFlag.Ghost, false)
+    }
 })
 scene.onHitTile(SpriteKind.Player, 2, function (sprite) {
-    statusbar.value += 1
+    statusbar.value += -25
     scene.placeOnRandomTile(Ninja, 9)
     info.startCountdown(35)
 })
-let points: Sprite = null
 let shuriken: Sprite = null
 let bad: Sprite = null
 let tile_list: tiles.Tile[] = []
+let points: Sprite = null
 let statusbar: StatusBarSprite = null
 let Ninja: Sprite = null
 let level = 0
